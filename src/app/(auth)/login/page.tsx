@@ -65,6 +65,12 @@ export default function LoginPage() {
               <label className="block text-xs font-medium text-[var(--text-muted)]">
                 Palavra-passe
               </label>
+              <Link
+                href="/recuperar"
+                className="text-xs text-[var(--primary)] hover:underline"
+              >
+                Esqueceu-se?
+              </Link>
             </div>
             <input
               name="password"

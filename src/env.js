@@ -7,10 +7,10 @@ export const env = createEnv({
    */
   server: {
     SUPABASE_SERVICE_ROLE_KEY: z.string().min(1),
-    UPSTASH_REDIS_REST_URL: z.url(),
-    UPSTASH_REDIS_REST_TOKEN: z.string().min(1),
-    TURNSTILE_SECRET_KEY: z.string().min(1),
-    WEBHOOK_PAYMENT_SECRET: z.string().min(1),
+    UPSTASH_REDIS_REST_URL: z.string().url().optional(),
+    UPSTASH_REDIS_REST_TOKEN: z.string().min(1).optional(),
+    TURNSTILE_SECRET_KEY: z.string().min(1).optional(),
+    WEBHOOK_PAYMENT_SECRET: z.string().min(1).optional(),
     // Gateways: obrigatórios apenas se o gateway estiver ativo.
     ASAAS_API_KEY: z.string().min(1).optional(),
     MERCADOPAGO_ACCESS_TOKEN: z.string().min(1).optional(),
@@ -22,10 +22,11 @@ export const env = createEnv({
    * Variáveis públicas (expostas ao navegador).
    */
   client: {
-    NEXT_PUBLIC_SUPABASE_URL: z.url(),
+    NEXT_PUBLIC_SUPABASE_URL: z.string().url(),
     NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(1),
-    NEXT_PUBLIC_TURNSTILE_SITE_KEY: z.string().min(1),
-    NEXT_PUBLIC_SENTRY_DSN: z.url(),
+    NEXT_PUBLIC_SITE_URL: z.string().url().default("http://localhost:3000"),
+    NEXT_PUBLIC_TURNSTILE_SITE_KEY: z.string().min(1).optional(),
+    NEXT_PUBLIC_SENTRY_DSN: z.string().url().optional(),
   },
 
   /**
@@ -42,6 +43,7 @@ export const env = createEnv({
     SENTRY_AUTH_TOKEN: process.env.SENTRY_AUTH_TOKEN,
     NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
     NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
     NEXT_PUBLIC_TURNSTILE_SITE_KEY: process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY,
     NEXT_PUBLIC_SENTRY_DSN: process.env.NEXT_PUBLIC_SENTRY_DSN,
   },

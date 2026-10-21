@@ -1,19 +1,13 @@
-import "server-only";
+import 'server-only';
+import { createServerClient } from '@supabase/ssr';
+import { cookies } from 'next/headers';
+import { env } from '@/env';
+import type { Database } from '@/types/database.types';
 
-import { createServerClient } from "@supabase/ssr";
-import { cookies } from "next/headers";
-
-import { env } from "@/env";
-
-/**
- * Cliente Supabase para Server Components, Server Actions e Route Handlers.
- * Usa a chave anônima (RLS ativo). Validar o utilizador sempre com
- * supabase.auth.getUser(), nunca com getSession() isolado.
- */
 export async function createClient() {
   const cookieStore = await cookies();
 
-  return createServerClient(
+  return createServerClient<Database>(
     env.NEXT_PUBLIC_SUPABASE_URL,
     env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
     {
@@ -23,15 +17,14 @@ export async function createClient() {
         },
         setAll(cookiesToSet) {
           try {
-            cookiesToSet.forEach(({ name, value, options }) => {
-              cookieStore.set(name, value, options);
-            });
+            cookiesToSet.forEach(({ name, value, options }) =>
+              cookieStore.set(name, value, options)
+            );
           } catch {
-            // Chamado a partir de um Server Component (cookies só de leitura).
-            // Ignorado: o refresh da sessão é feito no middleware/proxy.
+            // Em Server Components pura leitura, ignora tentativas de set
           }
         },
       },
-    },
+    }
   );
 }

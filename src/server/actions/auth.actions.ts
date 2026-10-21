@@ -1,7 +1,11 @@
 'use server';
 
 import { createClient } from '@/lib/supabase/server';
-import { loginSchema, cadastroSchema } from '@/lib/validators/auth.schema';
+import {
+  loginSchema,
+  cadastroSchema,
+  recuperarSchema,
+} from '@/lib/validators/auth.schema';
 import { redirect } from 'next/navigation';
 
 export type AuthActionResult = {
@@ -52,6 +56,8 @@ export async function cadastroAction(formData: unknown): Promise<AuthActionResul
   const { nome, email, password } = result.data;
   const supabase = await createClient();
 
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000';
+
   const { error } = await supabase.auth.signUp({
     email,
     password,
@@ -59,7 +65,7 @@ export async function cadastroAction(formData: unknown): Promise<AuthActionResul
       data: {
         full_name: nome,
       },
-      emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'}/login`,
+      emailRedirectTo: `${siteUrl}/auth/callback?next=/`,
     },
   });
 
@@ -68,6 +74,31 @@ export async function cadastroAction(formData: unknown): Promise<AuthActionResul
   }
 
   return { success: true, requiresEmailConfirmation: true };
+}
+
+/**
+ * Solicitação de redefinição de senha.
+ * Responde sempre de forma neutra para evitar enumeração de contas (security.md).
+ */
+export async function recuperarSenhaAction(formData: unknown): Promise<AuthActionResult> {
+  const result = recuperarSchema.safeParse(formData);
+
+  if (!result.success) {
+    const firstIssue = result.error.issues[0];
+    return { error: firstIssue ? firstIssue.message : 'E-mail inválido.' };
+  }
+
+  const { email } = result.data;
+  const supabase = await createClient();
+
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000';
+
+  // Executa o disparo sem revelar se o e-mail existe na base de dados
+  await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: `${siteUrl}/auth/callback?next=/perfil`,
+  });
+
+  return { success: true };
 }
 
 /**

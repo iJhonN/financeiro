@@ -1,26 +1,49 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+    /* Fundo e Superfícies (Modo Escuro Padrão) */
+    --bg: #0A0F1D;
+    --surface-1: #111827;
+    --surface-2: #1A2336;
+    --surface-3: #243049;
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+    /* Bordas Sutis */
+    --border: #1E293B;
+    --border-strong: #334155;
+
+    /* Tipografia */
+    --text: #F8FAFC;
+    --text-muted: #94A3B8;
+    --text-subtle: #64748B;
+
+    /* Cores Semânticas Dessaturadas */
+    --income: #10B981;
+    --income-bg: rgba(16, 185, 129, 0.1);
+    --expense: #F43F5E;
+    --expense-bg: rgba(244, 63, 94, 0.1);
+    --warning: #F59E0B;
+    --danger: #EF4444;
+    --focus-ring: #3B82F6;
+
+    /* Tema Primário Azul Padrão */
+    --primary: #2563EB;
+    --primary-hover: #3B82F6;
+
+    /* Acento Wolf Driver */
+    --module-driver: #F59E0B;
+  }
+
+  body {
+    background-color: var(--bg);
+    color: var(--text);
+    font-family: var(--font-inter, system-ui, -apple-system, sans-serif);
+    -webkit-font-smoothing: antialiased;
+    min-height: 100dvh;
+  }
+
+  /* Forçar numerais tabulares para alinhamento contábil */
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
+  }
 }

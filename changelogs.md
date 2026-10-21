@@ -6,12 +6,36 @@
 ---
 
 ## [Status Atual do Projeto & Próximos Passos]
-- **Fase Atual:** Fase 2 em Andamento (Layout Base e Autenticação).
-- **Ambiente & Infra:** Arquivo local `.env.local` configurado com credenciais válidas do Supabase; interceptação de rotas modernizada para `src/proxy.ts` (Next.js 16) consumindo variáveis tipadas via `@/env`.
-- **Auth & Telas:** Schemas de autenticação (`auth.schema.ts`), Server Actions (`loginAction`, `cadastroAction`, `logoutAction`) e telas `login/page.tsx` e `cadastro/page.tsx` implementadas conforme `security.md` e `design.md`.
-- **Próxima Etapa:** Implementação do AppShell, navegação mobile persistente (`BottomNav`), seletor de competência mensal (`MonthPicker`) e tela de recuperação de senha (`recuperar/page.tsx`).
+- **Fase Atual:** Fase 3 em Andamento (Domínio Financeiro: Transações, Contas e Cartões).
+- **Entregas Recentes:** 
+  - Repositório de dados `transacoes.repository.ts` com cálculo de datas via `date-fns` e busca por competência mensal (`YYYY-MM`).
+  - Server Action `criarTransacaoAction` com validação Zod e tipagem estrita de moeda em centavos inteiros (`valor_centavos`).
+  - Modal/Bottom Sheet `NovoLancamentoModal` responsivo com máscara dinâmica de digitação BRL sem ponto flutuante.
+  - Dashboard principal conectada em tempo real com agregação de saldo disponível, receitas e despesas.
+  - Compatibilização com o motor `cacheComponents` do Next.js 16 (`export const instant = false` e `await connection()`).
+- **Próximos Passos da Fase 3:**
+  1. Tela de Extrato Completo (`src/app/(app)/lancamentos/page.tsx`) com filtros por tipo, busca e paginação/scroll infinito.
+  2. Implementação das Contas Bancárias e Cartões de Crédito (tabelas `contas` e `cartoes`).
+  3. Ações de exclusão e edição de lançamentos.
 
 ---
+
+## [2026-10-21 13:30] - Fase 3: Conexão End-to-End de Transações e Dashboard
+- Criado `src/server/repositories/transacoes.repository.ts` com métodos `listarTransacoesMes` e `criarTransacao`.
+- Criado `src/server/actions/transacoes.actions.ts` garantindo conversão segura para centavos e revalidação de rotas.
+- Criado componente `src/components/transacoes/NovoLancamentoModal.tsx` integrado ao botão flutuante central da `BottomNav`.
+- Ajustada a função RPC `fn_tem_assinatura_ativa` no Supabase com permissões `GRANT EXECUTE` para `authenticated` e `service_role`.
+- Implementada a leitura dinâmica na rota raiz `src/app/(app)/page.tsx` com tratamento para `cacheComponents` do Next.js 16.
+- Validação: fluxo completo de criação de transação refletindo na dashboard aprovado com sucesso.
+
+## [2026-10-21 12:05] - Conclusão da Fase 2: Layout Base, Shell e Proteção de Sessão
+- Criado componente `src/components/layout/MonthPicker.tsx` com navegação de competências vinculada à URL (`date-fns/locale/pt-BR`).
+- Criado componente `src/components/layout/BottomNav.tsx` com 5 pontos de contato essenciais e botão central destacado para novas transações.
+- Criado componente `src/components/layout/Header.tsx` e `src/components/layout/AppShell.tsx` com Dark Mode nativo e suporte a privacidade de saldos.
+- Criado componente de interface `src/components/ui/StatCard.tsx` e utilitário `src/lib/money.ts` com conversão estrita de centavos para Real (BRL).
+- Configurado o layout protegido `src/app/(app)/layout.tsx` com validação de sessão em profundidade via `auth.getUser()` e checagem de assinatura via RPC `fn_tem_assinatura_ativa`.
+- Removido conflito de rota raiz em `src/app/page.tsx`, mantendo `src/app/(app)/page.tsx` no dashboard protegido.
+- Validação: `tsc --noEmit` aprovado com 0 erros.
 
 ## [2026-10-21 11:40] - Configuração de Env Local, Proxy Next.js 16 e Telas de Auth
 - Criado arquivo local `.env.local` com as chaves oficiais do projeto Supabase (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY` e `NEXT_PUBLIC_SITE_URL`).
