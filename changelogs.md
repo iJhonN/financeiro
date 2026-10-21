@@ -6,16 +6,22 @@
 ---
 
 ## [Status Atual do Projeto & Próximos Passos]
-- **Fase Atual:** Fase 4 em Conclusão (Domínio Complementar e Navegação).
-- **Entregas Recentes:** 
-  - Página de Navegação Centralizada (`/mais`): atalhos para Contas, Cartões, Metas e Categorias, exibição do status do utilizador logado e integração com `SignOutButton.tsx`.
-  - Autenticação: implementadas as server actions `logoutAction` e o alias `signOutAction` em `auth.actions.ts`.
-  - Gestão de Categorias (`/categorias`): interface com divisão em colunas para Despesas e Receitas, diferenciação entre categorias de sistema e personalizadas.
-  - Componentes `NovaCategoriaModal.tsx` e `AdicionarCategoriaButton.tsx` com seletor de paleta de cores.
-- **Próximos Passos (Transição para Relatórios e Dashboard):**
-  1. Relatórios e Gráficos de Despesas por Categoria (distribuição percentual e gráfico em rosca/barras).
-  2. Ajuste fino na Dashboard principal (`/`) para exibir resumo consolidado de contas e limites de cartões.
-  3. Aporte em Metas (abater saldo e atualizar o valor acumulado).
+- **Fase Atual:** Fase 4 em Conclusão (Dashboard Refinada e Relatórios).
+- **Entregas Recentes:**
+  - `src/components/layout/AppShell.tsx`: Largura responsiva expandida para `max-w-7xl` com paddings dinâmicos (`px-4 sm:px-6 lg:px-8`).
+  - `src/app/(app)/page.tsx`: Dashboard principal reestruturada em 3 blocos superiores nivelados (Saldo Consolidado, Receitas do Mês e Despesas do Mês) e duas colunas inferiores (Timeline de Movimentações + Widgets Laterais de Contas, Faturas e Metas).
+  - Alinhamento vertical estrito dos cabeçalhos de secção com a classe `h-7`.
+- **Próximos Passos:**
+  1. Implementação dos Relatórios e Gráficos de Despesas por Categoria (distribuição percentual).
+  2. Ajuste de aportes dinâmicos em Metas.
+  3. Transição para a Fase 5 (Módulo Wolf Driver Integrado).
+
+---
+
+## [2026-10-21 15:15] - Fase 4: Refinamento de Layout e Dashboard Principal
+- Corrigida a largura restritiva no `AppShell` para suporte completo a ecrãs largos e desktop.
+- Reorganizada a página inicial `/` com proporções harmónicas, cards nivelados e tipografia tabular (`tabular-nums`).
+- Validação estrita via TypeScript (`npx tsc --noEmit`) sem erros.
 
 ---
 

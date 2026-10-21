@@ -15,7 +15,7 @@ export function AppShell({ children }: AppShellProps) {
   return (
     <div className="flex min-h-screen flex-col bg-[var(--bg)] text-[var(--text)] antialiased">
       <Header />
-      <main className="flex-1 pb-20 pt-4 px-4 sm:px-6 max-w-5xl mx-auto w-full">
+      <main className="flex-1 pb-24 pt-4 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
         {children}
       </main>
       <BottomNav onOpenNovoLancamento={() => setModalAberto(true)} />
