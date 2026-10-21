@@ -6,10 +6,29 @@
 ---
 
 ## [Status Atual do Projeto & Próximos Passos]
-- **Fase Atual:** Fase 1 do Roadmap (Infraestrutura e Libs Base em Andamento).
-- **Banco de Dados (Supabase):** Provisionado com 16 tabelas, RLS forçado, RPCs atômicas e permissões blindadas contra avisos do linter.
-- **Repositório (GitHub):** Versionado e sincronizado com `.gitignore` blindado para Next.js, testes, ferramentas de IA e variáveis de ambiente.
-- **Próxima Etapa:** Criação do utilitário `src/lib/dates.ts` (funções imutáveis e proteção `clampDay`) e schemas Zod em `src/lib/validators/`.
+- **Fase Atual:** Fase 2 em Andamento (Layout Base e Autenticação).
+- **Ambiente & Infra:** Arquivo local `.env.local` configurado com credenciais válidas do Supabase; interceptação de rotas modernizada para `src/proxy.ts` (Next.js 16) consumindo variáveis tipadas via `@/env`.
+- **Auth & Telas:** Schemas de autenticação (`auth.schema.ts`), Server Actions (`loginAction`, `cadastroAction`, `logoutAction`) e telas `login/page.tsx` e `cadastro/page.tsx` implementadas conforme `security.md` e `design.md`.
+- **Próxima Etapa:** Implementação do AppShell, navegação mobile persistente (`BottomNav`), seletor de competência mensal (`MonthPicker`) e tela de recuperação de senha (`recuperar/page.tsx`).
+
+---
+
+## [2026-10-21 11:40] - Configuração de Env Local, Proxy Next.js 16 e Telas de Auth
+- Criado arquivo local `.env.local` com as chaves oficiais do projeto Supabase (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY` e `NEXT_PUBLIC_SITE_URL`).
+- Migrado `src/middleware.ts` para a convenção oficial do Next.js 16 em `src/proxy.ts`, consumindo diretamente o objeto seguro `env` de `@/env` e mantendo a validação estrita de sessão via `auth.getUser()`.
+- Criado `src/lib/validators/auth.schema.ts` com validação de senhas (12 a 128 caracteres) e normalização de e-mails.
+- Criado `src/server/actions/auth.actions.ts` com respostas genéricas contra enumeração de contas e suporte à confirmação obrigatória de e-mail.
+- Criadas as interfaces de `src/app/(auth)/login/page.tsx` e `src/app/(auth)/cadastro/page.tsx` com Dark Mode nativo, superfícies semânticas e tela de aviso pós-cadastro.
+- Validação: `tsc --noEmit` aprovado com zero erros e servidor de desenvolvimento em execução limpa.
+
+---
+
+## [2026-10-21 11:25] - Conclusão da Fase 1: Datas, Schemas Zod e Tipagem Supabase
+- `src/lib/dates.ts`: utilitário de datas imutáveis `YYYY-MM-DD` com proteção de fim de mês (`clampDay`).
+- `src/lib/validators/transacao.schema.ts` e `driver.schema.ts`: schemas Zod para validação server-side.
+- `src/types/database.types.ts`: tipos gerados a partir do schema Supabase.
+- `src/lib/supabase/client.ts`, `server.ts`, `admin.ts`: clientes tipados estritamente com `Database`.
+- Validação: `npx tsc --noEmit` sem erros. Sem novas variáveis de ambiente.
 
 ---
 
