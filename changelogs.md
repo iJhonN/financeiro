@@ -6,15 +6,32 @@
 ---
 
 ## [Status Atual do Projeto & Próximos Passos]
-- **Fase Atual:** Planejamento e Documentação Técnica Concluída.
-- **Estado dos Arquivos da Base:**
-  - `base.md`: Arquitetura Next.js 15+, convenções e roadmap de desenvolvimento.
-  - `bancodedados.md`: DDL do Postgres, RLS, triggers e RPCs do Supabase.
-  - `design.md`: Sistema de design (Dark mode por padrão, mobile-first, bottom sheets, tokens).
-  - `security.md`: Protocolos de segurança, auth, rate limit e headers.
-  - `env.md`: Tabela e regras de variáveis de ambiente.
-  - `changelogs.md`: Histórico de alterações e estado do projeto.
-- **Próxima Etapa:** Início da implementação técnica (Fase 1 do Roadmap — Configuração de Libs base, Zod Schemas e Clientes do Supabase).
+- **Fase Atual:** Fase 1 do Roadmap (Infraestrutura e Libs Base em Andamento).
+- **Banco de Dados (Supabase):** Provisionado com 16 tabelas, RLS forçado, RPCs atômicas e permissões blindadas contra avisos do linter.
+- **Repositório (GitHub):** Versionado e sincronizado com `.gitignore` blindado para Next.js, testes, ferramentas de IA e variáveis de ambiente.
+- **Próxima Etapa:** Criação do utilitário `src/lib/dates.ts` (funções imutáveis e proteção `clampDay`) e schemas Zod em `src/lib/validators/`.
+
+---
+
+## [2026-10-21 11:18] - Versionamento Git e Sincronização com GitHub
+- `.gitignore`: Atualizado com regras estritas para ignorar dependências, `.next/`, artefatos de testes (`playwright-report`, `coverage`), arquivos locais do Supabase (`.supabase/`), rastros de agentes IA (`.aider*`, `.cline*`, `.cursor*`) e todos os arquivos `.env*`, mantendo exceção unicamente para `!.env.example`.
+- Repositório remoto configurado e sincronizado via branch `main` no GitHub (`iJhonN/financeiro`).
+- Ficheiros de documentação técnica (`docs/`), regras (`.clinerules`) e histórico (`changelogs.md`) versionados com sucesso.
+
+---
+
+## [2026-10-21 11:10] - Provisionamento do Banco de Dados no Supabase (DDL, RLS e RPCs)
+- **Extensões:** Ativadas `pgcrypto` e `uuid-ossp` para geração segura de identificadores e chaves criptográficas.
+- **Tabelas e Modelagem:** Criada a estrutura completa de 16 tabelas (`profiles`, `user_roles`, `assinaturas`, `contas`, `cartoes`, `faturas`, `categorias`, `grupos_lancamento`, `transacoes`, `orcamentos`, `metas`, `veiculos`, `plataformas`, `driver_ganhos`, `driver_despesas`, `driver_manutencoes`, `audit_log`).
+- **Segurança (RLS):** Habilitado e forçado (`FORCE ROW LEVEL SECURITY`) em 100% das tabelas do schema public. Políticas isoladas por `auth.uid()`.
+- **Triggers e RPCs:**
+  - Implementado `fn_handle_user_created` para onboarding automático (carteira, categorias e plano trial de 7 dias).
+  - Implementado sincronismo atômico e bloqueio de edição direta para transações originadas no módulo Driver.
+  - Implementadas as RPCs atômicas `rpc_liquidar_fatura`, `rpc_registrar_ganho_driver` e `rpc_registrar_despesa_driver` com `security definer` e `set search_path = ''`.
+- **Blindagem de Permissões (Linter):** 
+  - Adicionado `security invoker` e `set search_path = ''` nas funções de gatilho pendentes (`fn_set_updated_at` e `fn_block_direct_driver_transacao_edit`).
+  - Revogadas permissões de execução pública (`anon` e `public`) em todas as funções internas e restrita a execução das RPCs operacionais exclusivamente para a role `authenticated`.
+- **Seed Data:** Populada a tabela de plataformas com os serviços essenciais de transporte, delivery e encomendas.
 
 ---
 
@@ -41,7 +58,6 @@
 - Criado `src/lib/money.ts`: funções puras `formatCentsToBRL` (cêntimos -> 'R$ 1.250,50') e `parseBRLToCents` (string -> cêntimos inteiros), sem float, conforme regra de dinheiro em inteiros de `base.md` e `bancodedados.md`.
 
 ---
-
 
 ## [2026-10-21 10:18] - Documentação de Variáveis de Ambiente
 ### Criado
