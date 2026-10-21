@@ -7,6 +7,7 @@ import {
   Target,
   CreditCard,
   Tags,
+  PieChart,
   ChevronRight,
   User,
   ShieldCheck,
@@ -23,6 +24,12 @@ export default async function MaisPage() {
   } = await supabase.auth.getUser();
 
   const menuItems = [
+    {
+      title: 'Relatórios e Análises',
+      description: 'Distribuição analítica de despesas por categoria',
+      href: '/relatorios',
+      icon: <PieChart className="h-5 w-5 text-[var(--primary)]" />,
+    },
     {
       title: 'Contas Bancárias e Carteiras',
       description: 'Gestão de saldos de contas correntes e dinheiro',

@@ -25,7 +25,7 @@ export function BottomNav({ onOpenNovoLancamento }: BottomNavProps) {
     { label: 'Extrato', href: '/lancamentos', icon: ArrowLeftRight },
     { label: 'Novo', href: '#', icon: Plus, isAction: true },
     { label: 'Cartões', href: '/cartoes', icon: CreditCard },
-    { label: 'Mais', href: '/perfil', icon: Menu },
+    { label: 'Mais', href: '/mais', icon: Menu },
   ];
 
   return (

@@ -6,15 +6,29 @@
 ---
 
 ## [Status Atual do Projeto & Próximos Passos]
-- **Fase Atual:** Fase 4 em Conclusão (Dashboard Refinada e Relatórios).
-- **Entregas Recentes:**
-  - `src/components/layout/AppShell.tsx`: Largura responsiva expandida para `max-w-7xl` com paddings dinâmicos (`px-4 sm:px-6 lg:px-8`).
-  - `src/app/(app)/page.tsx`: Dashboard principal reestruturada em 3 blocos superiores nivelados (Saldo Consolidado, Receitas do Mês e Despesas do Mês) e duas colunas inferiores (Timeline de Movimentações + Widgets Laterais de Contas, Faturas e Metas).
-  - Alinhamento vertical estrito dos cabeçalhos de secção com a classe `h-7`.
-- **Próximos Passos:**
-  1. Implementação dos Relatórios e Gráficos de Despesas por Categoria (distribuição percentual).
-  2. Ajuste de aportes dinâmicos em Metas.
-  3. Transição para a Fase 5 (Módulo Wolf Driver Integrado).
+- **Fase Atual:** Fase 4 Concluída com Sucesso → Iniciando Fase 5 (Módulo Wolf Driver Integrado).
+- **Entregas Consolidadas da Fase 4:**
+  - Gestão de Contas Bancárias (`/contas`) com cálculo de saldo dinâmico.
+  - Gestão de Cartões de Crédito e Faturas (`/cartoes`).
+  - Gestão de Categorias (`/categorias`) com separação por tipo e paleta de cores.
+  - Metas Financeiras (`/metas`) com cálculo percentual dinâmico e mecanismo atômico de aportes (`BotaoAporte.tsx` + `adicionarAporteAction`).
+  - Relatórios Analíticos (`/relatorios`) com distribuição de despesas por categoria em barra segmentada e totalizadores da competência.
+  - Menu "Mais" (`/mais`) atualizado com link para relatórios e encerramento seguro de sessão (`SignOutButton.tsx`).
+  - Dashboard Principal (`/`) balanceada em layout desktop (`max-w-7xl`), com 3 blocos nivelados e colunas equilibradas.
+- **Próximos Passos (Fase 5 — Wolf Driver):**
+  1. Criação do Repositório e Server Actions de Garagem/Veículos (`/driver/veiculos`).
+  2. Implementação do Painel Operacional do Driver (`/driver`).
+  3. Formulários de lançamento de Ganhos por plataforma (`/driver/ganhos/novo`) e Custos/Despesas operacionais (`/driver/despesas/novo`) integrados via RPC.
+
+---
+
+## [2026-10-21 15:30] - Fase 4: Conclusão de Aportes em Metas e Módulo de Relatórios
+- Implementada a Server Action `adicionarAporteAction` em `src/server/actions/metas.actions.ts` com validação de cêntimos via Zod e alternância automática de `concluida`.
+- Criado o componente de cliente `BotaoAporte.tsx` com input monetário BRL e feedback visual de carregamento.
+- Integrado o fluxo de aportes nos cards da página `src/app/(app)/metas/page.tsx`.
+- Criada a página de Relatórios Analíticos em `src/app/(app)/relatorios/page.tsx`, com agregação por categoria e cálculo do resultado líquido da competência.
+- Atualizado o menu `src/app/(app)/mais/page.tsx` para incluir o atalho de Relatórios e Análises.
+- Validação estrita via TypeScript (`npx tsc --noEmit`) sem erros.
 
 ---
 
