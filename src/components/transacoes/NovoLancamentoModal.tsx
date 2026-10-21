@@ -17,12 +17,21 @@ interface ContaOption {
   nome: string;
 }
 
+interface CategoriaOption {
+  id: string;
+  nome: string;
+  tipo: string;
+}
+
 export function NovoLancamentoModal({ isOpen, onClose }: NovoLancamentoModalProps) {
   const [isPending, startTransition] = useTransition();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const [contas, setContas] = useState<ContaOption[]>([]);
   const [contaId, setContaId] = useState<string>('');
+
+  const [categorias, setCategorias] = useState<CategoriaOption[]>([]);
+  const [categoriaId, setCategoriaId] = useState<string>('');
 
   const [tipo, setTipo] = useState<'despesa' | 'receita'>('despesa');
   const [valorDisplay, setValorDisplay] = useState('R$ 0,00');
@@ -34,21 +43,29 @@ export function NovoLancamentoModal({ isOpen, onClose }: NovoLancamentoModalProp
   useEffect(() => {
     if (!isOpen) return;
 
-    async function carregarContas() {
+    async function carregarDados() {
       const supabase = createClient();
-      const { data } = await supabase
-        .from('contas')
-        .select('id, nome')
-        .order('nome', { ascending: true });
 
-      if (data && data.length > 0 && data[0]) {
-        setContas(data);
-        setContaId(data[0].id);
+      const [resContas, resCategorias] = await Promise.all([
+        supabase.from('contas').select('id, nome').order('nome', { ascending: true }),
+        supabase.from('categorias').select('id, nome, tipo').order('nome', { ascending: true }),
+      ]);
+
+      if (resContas.data && resContas.data.length > 0 && resContas.data[0]) {
+        setContas(resContas.data);
+        setContaId(resContas.data[0].id);
+      }
+
+      if (resCategorias.data) {
+        setCategorias(resCategorias.data);
       }
     }
 
-    carregarContas();
+    carregarDados();
   }, [isOpen]);
+
+  // Filtra as categorias compatíveis com o tipo selecionado (receita ou despesa)
+  const categoriasFiltradas = categorias.filter((c) => c.tipo === tipo);
 
   if (!isOpen) return null;
 
@@ -75,6 +92,7 @@ export function NovoLancamentoModal({ isOpen, onClose }: NovoLancamentoModalProp
         forma,
         data_competencia: dataCompetencia,
         conta_id: contaId || null,
+        categoria_id: categoriaId || null,
         status: 'pago',
       });
 
@@ -86,6 +104,7 @@ export function NovoLancamentoModal({ isOpen, onClose }: NovoLancamentoModalProp
       setValorDisplay('R$ 0,00');
       setValorCentavos(0);
       setDescricao('');
+      setCategoriaId('');
       onClose();
     });
   }
@@ -120,7 +139,10 @@ export function NovoLancamentoModal({ isOpen, onClose }: NovoLancamentoModalProp
           <div className="grid grid-cols-2 gap-2 p-1 bg-[var(--surface-2)] rounded-lg">
             <button
               type="button"
-              onClick={() => setTipo('despesa')}
+              onClick={() => {
+                setTipo('despesa');
+                setCategoriaId('');
+              }}
               className={`flex items-center justify-center gap-2 py-2 text-xs font-medium rounded-md transition-all ${
                 tipo === 'despesa'
                   ? 'bg-[var(--surface-1)] text-[var(--expense)] shadow-sm'
@@ -132,7 +154,10 @@ export function NovoLancamentoModal({ isOpen, onClose }: NovoLancamentoModalProp
             </button>
             <button
               type="button"
-              onClick={() => setTipo('receita')}
+              onClick={() => {
+                setTipo('receita');
+                setCategoriaId('');
+              }}
               className={`flex items-center justify-center gap-2 py-2 text-xs font-medium rounded-md transition-all ${
                 tipo === 'receita'
                   ? 'bg-[var(--surface-1)] text-[var(--income)] shadow-sm'
@@ -172,7 +197,7 @@ export function NovoLancamentoModal({ isOpen, onClose }: NovoLancamentoModalProp
             />
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="block text-xs font-medium text-[var(--text-muted)] mb-1">
                 Conta / Carteira
@@ -194,6 +219,26 @@ export function NovoLancamentoModal({ isOpen, onClose }: NovoLancamentoModalProp
               </select>
             </div>
 
+            <div>
+              <label className="block text-xs font-medium text-[var(--text-muted)] mb-1">
+                Categoria
+              </label>
+              <select
+                value={categoriaId}
+                onChange={(e) => setCategoriaId(e.target.value)}
+                className="w-full rounded-lg border border-transparent bg-[var(--surface-2)] px-3 py-2 text-sm text-[var(--text)] focus:border-[var(--primary)] focus:outline-none"
+              >
+                <option value="">Sem categoria</option>
+                {categoriasFiltradas.map((cat) => (
+                  <option key={cat.id} value={cat.id}>
+                    {cat.nome}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="block text-xs font-medium text-[var(--text-muted)] mb-1">
                 Forma

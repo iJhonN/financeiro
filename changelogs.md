@@ -6,17 +6,26 @@
 ---
 
 ## [Status Atual do Projeto & Próximos Passos]
-- **Fase Atual:** Fase 3 Concluída (Domínio Financeiro: Transações, Contas e Cartões).
+- **Fase Atual:** Fase 4 em Andamento (Categorias, Metas Financeiras e Relatórios).
 - **Entregas Recentes:** 
-  - Extrato dedicado (`/lancamentos`) com filtros por tipo (Todos, Receitas, Despesas) e exclusão atômica de lançamentos via Server Action e `useTransition`.
-  - Módulo de Contas Bancárias (`/contas`): repositório, Server Action com Zod, modal `NovaContaModal` e cálculo de saldo real dinâmico baseado em lançamentos vinculados.
-  - Seletor de Contas integrado no fluxo do modal `NovoLancamentoModal`.
-  - Módulo de Cartões de Crédito (`/cartoes`): alinhamento com esquema real do banco (`apelido`, `banco_slug`, `limite_centavos`, datas de fecho/vencimento), modal `NovoCartaoModal` e consolidação de fatura/limite disponível.
-- **Próximos Passos (Início da Fase 4 - Metas Financeiras e Categorias / Relatórios):**
-  1. Sistema de Categorização (tabela `categorias`) e vinculação às transações.
-  2. Módulo de Metas Financeiras / Orçamentos Mensais (`/metas`).
-  3. Relatórios visuais e gráficos de distribuição por categoria.
+  - Módulo de Categorias: repositório `categorias.repository.ts`, Server Actions `categorias.actions.ts` e integração do seletor contextual filtrado por tipo (`receita` / `despesa`) no `NovoLancamentoModal`.
+  - Módulo de Metas Financeiras (`/metas`): repositório `metas.repository.ts`, Server Action `metas.actions.ts` com validação Zod e schema real (`nome`, `alvo_centavos`, `atual_centavos`, `prazo`).
+  - Interface visual `/metas` com cálculo dinâmico de percentual de conclusão e barra de progresso tátil.
+  - Componentes `NovaMetaModal.tsx` e `AdicionarMetaButton.tsx` com conversão estrita de BRL para cêntimos inteiros.
+- **Próximos Passos da Fase 4:**
+  1. Relatórios e Gráficos de Despesas por Categoria (distribuição percentual na Dashboard e extrato).
+  2. Aporte/Incremento em Metas (abater montantes do saldo e atualizar o `atual_centavos` da meta).
+  3. Navegação da aplicação: adicionar atalhos para `/contas` e `/metas` no menu "Mais" ou cabeçalho.
 
+---
+
+## [2026-10-21 14:48] - Fase 4: Implementação de Categorias e Metas Financeiras
+- Criados `categorias.repository.ts` e `categorias.actions.ts`.
+- Atualizado `NovoLancamentoModal.tsx` para carregar e associar categorias às transações.
+- Criados `metas.repository.ts` e `metas.actions.ts` alinhados com as colunas reais da base de dados (`nome`, `alvo_centavos`, `atual_centavos`).
+- Construída a interface completa de metas em `src/app/(app)/metas/page.tsx` com barras de progresso percentual.
+- Validação estrita via TypeScript (`npx tsc --noEmit`) sem erros.
+  
 ---
 
 ## [2026-10-21 14:02] - Fase 3: Conclusão do Domínio Financeiro (Contas e Cartões de Crédito)
