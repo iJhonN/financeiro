@@ -6,17 +6,27 @@
 ---
 
 ## [Status Atual do Projeto & Próximos Passos]
-- **Fase Atual:** Fase 4 em Andamento (Categorias, Metas Financeiras e Relatórios).
+- **Fase Atual:** Fase 4 em Conclusão (Domínio Complementar e Navegação).
 - **Entregas Recentes:** 
-  - Módulo de Categorias: repositório `categorias.repository.ts`, Server Actions `categorias.actions.ts` e integração do seletor contextual filtrado por tipo (`receita` / `despesa`) no `NovoLancamentoModal`.
-  - Módulo de Metas Financeiras (`/metas`): repositório `metas.repository.ts`, Server Action `metas.actions.ts` com validação Zod e schema real (`nome`, `alvo_centavos`, `atual_centavos`, `prazo`).
-  - Interface visual `/metas` com cálculo dinâmico de percentual de conclusão e barra de progresso tátil.
-  - Componentes `NovaMetaModal.tsx` e `AdicionarMetaButton.tsx` com conversão estrita de BRL para cêntimos inteiros.
-- **Próximos Passos da Fase 4:**
-  1. Relatórios e Gráficos de Despesas por Categoria (distribuição percentual na Dashboard e extrato).
-  2. Aporte/Incremento em Metas (abater montantes do saldo e atualizar o `atual_centavos` da meta).
-  3. Navegação da aplicação: adicionar atalhos para `/contas` e `/metas` no menu "Mais" ou cabeçalho.
+  - Página de Navegação Centralizada (`/mais`): atalhos para Contas, Cartões, Metas e Categorias, exibição do status do utilizador logado e integração com `SignOutButton.tsx`.
+  - Autenticação: implementadas as server actions `logoutAction` e o alias `signOutAction` em `auth.actions.ts`.
+  - Gestão de Categorias (`/categorias`): interface com divisão em colunas para Despesas e Receitas, diferenciação entre categorias de sistema e personalizadas.
+  - Componentes `NovaCategoriaModal.tsx` e `AdicionarCategoriaButton.tsx` com seletor de paleta de cores.
+- **Próximos Passos (Transição para Relatórios e Dashboard):**
+  1. Relatórios e Gráficos de Despesas por Categoria (distribuição percentual e gráfico em rosca/barras).
+  2. Ajuste fino na Dashboard principal (`/`) para exibir resumo consolidado de contas e limites de cartões.
+  3. Aporte em Metas (abater saldo e atualizar o valor acumulado).
 
+---
+
+## [2026-10-21 15:05] - Fase 4: Menu Mais, Gestão de Categorias e Logout
+- Padronizadas as ações de encerramento de sessão em `src/server/actions/auth.actions.ts` com suporte a `signOutAction`.
+- Criado o componente de logout interativo `SignOutButton.tsx` com feedback visual de carregamento via `useTransition`.
+- Criada a página `src/app/(app)/mais/page.tsx` conectando os módulos auxiliares do sistema.
+- Criada a página `src/app/(app)/categorias/page.tsx` com agrupamento por tipo (`receita` e `despesa`).
+- Criados `NovaCategoriaModal.tsx` e `AdicionarCategoriaButton.tsx` com suporte a escolha de cores hexadecimais.
+- Validação estrita via TypeScript (`npx tsc --noEmit`) sem erros.
+  
 ---
 
 ## [2026-10-21 14:48] - Fase 4: Implementação de Categorias e Metas Financeiras

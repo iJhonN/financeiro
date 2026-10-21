@@ -109,3 +109,10 @@ export async function logoutAction(): Promise<void> {
   await supabase.auth.signOut();
   redirect('/login');
 }
+
+/**
+ * Alias compatível com componentes de autenticação/layout.
+ */
+export async function signOutAction(): Promise<void> {
+  await logoutAction();
+}
