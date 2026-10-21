@@ -45,3 +45,21 @@ export async function criarTransacao(
 
   return data as Transacao;
 }
+
+export async function excluirTransacao(
+  supabase: SupabaseClient<Database>,
+  id: string,
+  userId: string
+) {
+  const { error } = await supabase
+    .from('transacoes')
+    .delete()
+    .eq('id', id)
+    .eq('user_id', userId);
+
+  if (error) {
+    throw new Error(`Erro ao excluir transação: ${error.message}`);
+  }
+
+  return true;
+}

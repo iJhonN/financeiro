@@ -6,17 +6,27 @@
 ---
 
 ## [Status Atual do Projeto & Próximos Passos]
-- **Fase Atual:** Fase 3 em Andamento (Domínio Financeiro: Transações, Contas e Cartões).
+- **Fase Atual:** Fase 3 Concluída (Domínio Financeiro: Transações, Contas e Cartões).
 - **Entregas Recentes:** 
-  - Repositório de dados `transacoes.repository.ts` com cálculo de datas via `date-fns` e busca por competência mensal (`YYYY-MM`).
-  - Server Action `criarTransacaoAction` com validação Zod e tipagem estrita de moeda em centavos inteiros (`valor_centavos`).
-  - Modal/Bottom Sheet `NovoLancamentoModal` responsivo com máscara dinâmica de digitação BRL sem ponto flutuante.
-  - Dashboard principal conectada em tempo real com agregação de saldo disponível, receitas e despesas.
-  - Compatibilização com o motor `cacheComponents` do Next.js 16 (`export const instant = false` e `await connection()`).
-- **Próximos Passos da Fase 3:**
-  1. Tela de Extrato Completo (`src/app/(app)/lancamentos/page.tsx`) com filtros por tipo, busca e paginação/scroll infinito.
-  2. Implementação das Contas Bancárias e Cartões de Crédito (tabelas `contas` e `cartoes`).
-  3. Ações de exclusão e edição de lançamentos.
+  - Extrato dedicado (`/lancamentos`) com filtros por tipo (Todos, Receitas, Despesas) e exclusão atômica de lançamentos via Server Action e `useTransition`.
+  - Módulo de Contas Bancárias (`/contas`): repositório, Server Action com Zod, modal `NovaContaModal` e cálculo de saldo real dinâmico baseado em lançamentos vinculados.
+  - Seletor de Contas integrado no fluxo do modal `NovoLancamentoModal`.
+  - Módulo de Cartões de Crédito (`/cartoes`): alinhamento com esquema real do banco (`apelido`, `banco_slug`, `limite_centavos`, datas de fecho/vencimento), modal `NovoCartaoModal` e consolidação de fatura/limite disponível.
+- **Próximos Passos (Início da Fase 4 - Metas Financeiras e Categorias / Relatórios):**
+  1. Sistema de Categorização (tabela `categorias`) e vinculação às transações.
+  2. Módulo de Metas Financeiras / Orçamentos Mensais (`/metas`).
+  3. Relatórios visuais e gráficos de distribuição por categoria.
+
+---
+
+## [2026-10-21 14:02] - Fase 3: Conclusão do Domínio Financeiro (Contas e Cartões de Crédito)
+- Implementada exclusão de transações em `transacoes.repository.ts` e `transacoes.actions.ts`.
+- Criada a tela de extrato `/lancamentos` com componente interativo `TransacaoItem.tsx`.
+- Criado repositório `contas.repository.ts`, actions `contas.actions.ts` e interface `/contas` com `NovaContaModal.tsx`.
+- Vinculado o seletor de contas ativas ao modal de criação de transações.
+- Criado repositório `cartoes.repository.ts`, actions `cartoes.actions.ts` e interface `/cartoes` com `NovoCartaoModal.tsx`.
+- Corrigida a ordenação de cartões por `apelido` em vez de `nome`, e alinhados os campos com o schema Supabase.
+- Validação: criação e listagem dinâmica de transações, contas e cartões aprovadas em ambiente de desenvolvimento.
 
 ---
 

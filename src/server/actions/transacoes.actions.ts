@@ -3,7 +3,10 @@
 import { z } from 'zod';
 import { revalidatePath } from 'next/cache';
 import { createClient } from '@/lib/supabase/server';
-import { criarTransacao } from '../repositories/transacoes.repository';
+import {
+  criarTransacao,
+  excluirTransacao,
+} from '../repositories/transacoes.repository';
 
 const transacaoSchema = z.object({
   descricao: z.string().min(2, 'A descrição deve ter pelo menos 2 caracteres.'),
@@ -75,6 +78,33 @@ export async function criarTransacaoAction(
       error instanceof Error
         ? error.message
         : 'Erro inesperado ao criar a transação.';
+    return { error: message };
+  }
+}
+
+export async function excluirTransacaoAction(id: string) {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { error: 'Não autorizado. Sessão inválida.' };
+  }
+
+  try {
+    await excluirTransacao(supabase, id, user.id);
+
+    revalidatePath('/');
+    revalidatePath('/lancamentos');
+
+    return { success: true };
+  } catch (error: unknown) {
+    const message =
+      error instanceof Error
+        ? error.message
+        : 'Erro inesperado ao excluir o lançamento.';
     return { error: message };
   }
 }

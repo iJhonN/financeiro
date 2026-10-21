@@ -1,19 +1,28 @@
 'use client';
 
-import { useState, useTransition } from 'react';
+import { useState, useEffect, useTransition } from 'react';
 import { format } from 'date-fns';
 import { X, Loader2, ArrowUpCircle, ArrowDownCircle } from 'lucide-react';
 import { criarTransacaoAction } from '@/server/actions/transacoes.actions';
 import { formatCentavosToBRL, parseBRLToCentavos } from '@/lib/money';
+import { createClient } from '@/lib/supabase/client';
 
 interface NovoLancamentoModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
+interface ContaOption {
+  id: string;
+  nome: string;
+}
+
 export function NovoLancamentoModal({ isOpen, onClose }: NovoLancamentoModalProps) {
   const [isPending, startTransition] = useTransition();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const [contas, setContas] = useState<ContaOption[]>([]);
+  const [contaId, setContaId] = useState<string>('');
 
   const [tipo, setTipo] = useState<'despesa' | 'receita'>('despesa');
   const [valorDisplay, setValorDisplay] = useState('R$ 0,00');
@@ -21,6 +30,25 @@ export function NovoLancamentoModal({ isOpen, onClose }: NovoLancamentoModalProp
   const [descricao, setDescricao] = useState('');
   const [forma, setForma] = useState<'pix' | 'dinheiro' | 'debito' | 'credito' | 'ted' | 'boleto'>('pix');
   const [dataCompetencia, setDataCompetencia] = useState(format(new Date(), 'yyyy-MM-dd'));
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    async function carregarContas() {
+      const supabase = createClient();
+      const { data } = await supabase
+        .from('contas')
+        .select('id, nome')
+        .order('nome', { ascending: true });
+
+      if (data && data.length > 0 && data[0]) {
+        setContas(data);
+        setContaId(data[0].id);
+      }
+    }
+
+    carregarContas();
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -46,6 +74,7 @@ export function NovoLancamentoModal({ isOpen, onClose }: NovoLancamentoModalProp
         tipo,
         forma,
         data_competencia: dataCompetencia,
+        conta_id: contaId || null,
         status: 'pago',
       });
 
@@ -54,7 +83,6 @@ export function NovoLancamentoModal({ isOpen, onClose }: NovoLancamentoModalProp
         return;
       }
 
-      // Reinicia estado e encerra modal
       setValorDisplay('R$ 0,00');
       setValorCentavos(0);
       setDescricao('');
@@ -89,7 +117,6 @@ export function NovoLancamentoModal({ isOpen, onClose }: NovoLancamentoModalProp
         )}
 
         <form onSubmit={handleSubmit} className="mt-4 space-y-4">
-          {/* Seletor Tipo: Despesa vs Receita */}
           <div className="grid grid-cols-2 gap-2 p-1 bg-[var(--surface-2)] rounded-lg">
             <button
               type="button"
@@ -117,7 +144,6 @@ export function NovoLancamentoModal({ isOpen, onClose }: NovoLancamentoModalProp
             </button>
           </div>
 
-          {/* Input de Montante (Centavos) */}
           <div>
             <label className="block text-xs font-medium text-[var(--text-muted)] mb-1">
               Montante
@@ -132,7 +158,6 @@ export function NovoLancamentoModal({ isOpen, onClose }: NovoLancamentoModalProp
             />
           </div>
 
-          {/* Descrição */}
           <div>
             <label className="block text-xs font-medium text-[var(--text-muted)] mb-1">
               Descrição
@@ -147,11 +172,31 @@ export function NovoLancamentoModal({ isOpen, onClose }: NovoLancamentoModalProp
             />
           </div>
 
-          {/* Grelha de Forma de Pagamento e Data */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div>
               <label className="block text-xs font-medium text-[var(--text-muted)] mb-1">
-                Forma de Pagamento
+                Conta / Carteira
+              </label>
+              <select
+                value={contaId}
+                onChange={(e) => setContaId(e.target.value)}
+                className="w-full rounded-lg border border-transparent bg-[var(--surface-2)] px-3 py-2 text-sm text-[var(--text)] focus:border-[var(--primary)] focus:outline-none"
+              >
+                {contas.length === 0 ? (
+                  <option value="">Nenhuma conta</option>
+                ) : (
+                  contas.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.nome}
+                    </option>
+                  ))
+                )}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-xs font-medium text-[var(--text-muted)] mb-1">
+                Forma
               </label>
               <select
                 value={forma}
@@ -162,14 +207,14 @@ export function NovoLancamentoModal({ isOpen, onClose }: NovoLancamentoModalProp
                 <option value="debito">Débito</option>
                 <option value="credito">Crédito</option>
                 <option value="dinheiro">Dinheiro</option>
-                <option value="ted">TED / Transferência</option>
+                <option value="ted">TED</option>
                 <option value="boleto">Boleto</option>
               </select>
             </div>
 
             <div>
               <label className="block text-xs font-medium text-[var(--text-muted)] mb-1">
-                Data de Competência
+                Data
               </label>
               <input
                 type="date"
